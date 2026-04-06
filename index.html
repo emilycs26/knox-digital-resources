@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Resources – Interactive Health Guides</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">&#9632;</div>
+      <div>
+        <div class="brand-title">Digital Resources</div>
+        <div class="brand-sub">Interactive Health Guides</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#" class="nav-link active">Diabetes</a>
+      <a href="#" class="nav-link">Hypertension</a>
+      <a href="#" class="nav-link">Vaccines</a>
+      <a href="#" class="nav-link">Dental Health</a>
+    </nav>
+  </header>
+
+  <!-- PROGRESS BAR (rendered by JS) -->
+  <div class="progress-bar-container"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="content-wrapper">
+    <h1 class="module-title">Diabetes</h1>
+    <p class="module-subtitle">Click on the tabs below to learn more about:</p>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="introduction">Introduction</button>
+      <button class="tab-btn" data-tab="diet">Diet</button>
+      <button class="tab-btn" data-tab="medication">Medication</button>
+    </div>
+
+    <!-- TAB PANELS -->
+    <div class="tab-content" id="tab-introduction">
+      <!-- Injected by JS -->
+    </div>
+    <div class="tab-content hidden" id="tab-diet">
+      <!-- Injected by JS -->
+    </div>
+    <div class="tab-content hidden" id="tab-medication">
+      <!-- Injected by JS -->
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-contact">
+        <h4>CONTACT US</h4>
+        <p>Mid Coast Health Net<br>d.b.a. The Knox Clinic</p>
+        <p>22 White Street<br>Rockland, ME 04841</p>
+        <p>Phone: (207) 680-4545<br>Fax: (207) 680-4544</p>
+      </div>
+      <div class="footer-donate">
+        <h4>DONATE</h4>
+        <button class="donate-btn">Please Donate Today!</button>
+        <h4>FOLLOW US</h4>
+        <div class="social-icons">
+          <a href="#" class="social-icon">f</a>
+          <a href="#" class="social-icon">in</a>
+          <a href="#" class="social-icon">li</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copy">Copyright &copy; Knox Clinic. All rights reserved.</div>
+  </footer>
+
+  <script src="js/diabetes.js"></script>
+</body>
+</html>
