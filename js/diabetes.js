@@ -720,7 +720,7 @@ function renderMedication() {
     </div>
     ${sections}
     <div class="next-btn-row">
-      <button class="next-btn" id="medNextBtn">Complete Diabetes Module ✓</button>
+      <button class="next-btn" id="medNextBtn">Next Module: Dental Health &rarr;</button>
     </div>`;
 
   // Open Monitoring by default
@@ -738,7 +738,7 @@ function renderMedication() {
   });
 
   initCardStack();
-  document.getElementById('medNextBtn').addEventListener('click', () => markSubTabDone('medication'));
+  document.getElementById('medNextBtn').addEventListener('click', () => completeModule());
 }
 
 // Manages the stacked medication quick-reference cards.
@@ -781,17 +781,16 @@ const tabRenderers = {
 const rendered = {}; // tracks which tabs have been rendered already
 
 function switchTab(name) {
-  progressState.currentSubTab = name;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   document.querySelectorAll('.tab-content').forEach(p => p.classList.toggle('hidden', p.id !== `tab-${name}`));
   if (!rendered[name]) { tabRenderers[name](); rendered[name] = true; }
-  markSubTabDone(name);
+  updateProgress(name);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
 
 // ── INIT ──────────────────────────────────────────
-progressState.currentSubTab = 'introduction';
 renderProgressBar();
 switchTab('introduction');

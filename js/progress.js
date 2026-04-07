@@ -1,89 +1,104 @@
 /* =============================================
    progress.js — Knox Clinic Digital Resources
    Shared progress bar logic used across ALL
-   health modules. No module-specific content
-   belongs here.
+   health modules.
 
-   Depends on: nothing (no imports needed)
+   Depends on: nothing
    Used by: diabetes.js (and future modules)
    ============================================= */
 
 
 // ── PROGRESS STATE ────────────────────────────────
-// Each module page that uses this file should
-// update progressState to reflect its own tabs.
 const progressState = {
   modules:      ['diabetes', 'dental', 'hypertension', 'vaccines'],
   moduleLabels: ['Diabetes', 'Dental Health', 'Hypertension', 'Vaccines'],
-
-  // subTabs: which sub-tabs each module has
-  // Future modules should add their key here.
   subTabs: {
     diabetes: ['introduction', 'diet', 'medication'],
-    // dental:      ['introduction', ...],
+    // dental:       ['introduction', ...],
     // hypertension: ['introduction', ...],
-    // vaccines:    ['introduction', ...],
+    // vaccines:     ['introduction', ...],
   },
-
-  completedSubs:    { diabetes: new Set() },
   completedModules: new Set(),
-  currentModule:    'diabetes',
-  currentSubTab:    'introduction',
+  currentModule:   'diabetes',
+  currentSubTab:   'introduction',
+  currentTabIdx:    0,
 };
 
 
+// ── MARKER POSITIONS ──────────────────────────────
+// All positions are hardcoded percentages so the fill
+// bar and the dots/flags are always in sync.
+//
+// Layout across 4 modules (each gets 25% of the bar):
+//
+//  Module 0 (diabetes):     dot1=8%  dot2=16%  flag=25%
+//  Module 1 (dental):       dot1=33% dot2=41%  flag=50%
+//  Module 2 (hypertension): dot1=58% dot2=66%  flag=75%
+//  Module 3 (vaccines):     dot1=83% dot2=91%  flag=100%
+//
+// Fill stop values (what fillPct is set to):
+//   introduction (idx 0) →  0%  (empty)
+//   diet         (idx 1) →  8%  (on dot1)
+//   medication   (idx 2) → 16%  (on dot2)
+//   completed             → 25%  (on flag)
+//
+// For future modules, extend this table by adding a new
+// row following the same pattern (+25% per module).
+const MODULE_MARKERS = [
+  { dot1: 8,  dot2: 16, flag: 25  },  // diabetes
+  { dot1: 33, dot2: 41, flag: 50  },  // dental
+  { dot1: 58, dot2: 66, flag: 75  },  // hypertension
+  { dot1: 83, dot2: 91, flag: 100 },  // vaccines
+];
+
+// Fill % for each tab index within a module.
+// Index into this with currentTabIdx (0, 1, or 2).
+// Module offset (currentModIdx * 25) is added on top.
+const TAB_FILL_OFFSETS = [0, 8, 16]; // intro, diet, medication
+
+
 // ── RENDER PROGRESS BAR ───────────────────────────
-// Builds and injects the full progress bar HTML
-// into .progress-bar-container. Call this any time
-// progress state changes.
 function renderProgressBar() {
   const container = document.querySelector('.progress-bar-container');
-  const subs      = progressState.subTabs[progressState.currentModule];
-  const done      = progressState.completedSubs[progressState.currentModule];
   const modules   = progressState.modules;
   const modLabels = progressState.moduleLabels;
-
-  const spacing = 25, dotOffsets = [6, 12, 18], flagOffset = 25;
-  const markers = [];
+  const curMod    = progressState.currentModule;
+  const curModIdx = modules.indexOf(curMod);
+  const curTabIdx = progressState.currentTabIdx;
+  const markers   = [];
 
   modules.forEach((mod, mi) => {
-    const base       = mi * spacing;
-    const modDone    = progressState.completedModules.has(mod);
-    const modSubs    = progressState.subTabs[mod] || ['a', 'b', 'c'];
-    const modDoneSubs = progressState.completedSubs[mod] || new Set();
+    const m       = MODULE_MARKERS[mi];
+    const modDone = progressState.completedModules.has(mod);
+    const isCur   = mod === curMod;
 
-    dotOffsets.forEach((off, di) => {
-      const pct   = base + off * (spacing / flagOffset);
-      const isDone = modDone || modDoneSubs.has(modSubs[di]);
-      markers.push({ type: 'dot', pct, done: isDone, id: `dot-${mod}-${di}` });
-    });
+    const dot1Done = modDone || (isCur && curTabIdx >= 1);
+    const dot2Done = modDone || (isCur && curTabIdx >= 2);
+    const flagDone = modDone;
 
-    markers.push({
-      type:  'flag',
-      pct:   Math.min(base + spacing, 100),
-      done:  modDone,
-      id:    `flag-${mod}`,
-      label: modLabels[mi],
-      mod,
-    });
+    markers.push({ type: 'dot',  pct: m.dot1, done: dot1Done, id: `dot-${mod}-0` });
+    markers.push({ type: 'dot',  pct: m.dot2, done: dot2Done, id: `dot-${mod}-1` });
+    markers.push({ type: 'flag', pct: m.flag, done: flagDone, id: `flag-${mod}`, label: modLabels[mi] });
   });
 
-  // Calculate fill width
-  let fillPct = progressState.completedModules.size * 25;
-  if (!progressState.completedModules.has(progressState.currentModule)) {
-    fillPct += (done.size / subs.length) * 25;
-  }
-  fillPct = Math.min(100, fillPct);
+  // Fill bar: base offset of past completed modules +
+  // the offset for the current tab within this module.
+  const basePct = progressState.completedModules.has(curMod)
+    ? MODULE_MARKERS[curModIdx].flag
+    : curModIdx * 25 + TAB_FILL_OFFSETS[Math.min(curTabIdx, TAB_FILL_OFFSETS.length - 1)];
+  const fillPct = Math.min(100, basePct);
 
-  const markersHTML = markers.map(m =>
-    m.type === 'dot'
-      ? `<div class="progress-marker" style="left:${m.pct}%" id="${m.id}">
-           <span class="p-dot ${m.done ? 'done' : ''}"></span>
-         </div>`
-      : `<div class="progress-marker" style="left:${m.pct === 100 ? 'calc(100% - 4px)' : m.pct + '%'}" id="${m.id}">
-           <span class="p-flag ${m.done ? 'done' : ''}">⚑</span>
-         </div>`
-  ).join('');
+  const markersHTML = markers.map(m => {
+    const left = m.pct >= 100 ? 'calc(100% - 6px)' : `${m.pct}%`;
+    if (m.type === 'dot') {
+      return `<div class="progress-marker" style="left:${left}" id="${m.id}">
+                <span class="p-dot ${m.done ? 'done' : ''}"></span>
+              </div>`;
+    }
+    return `<div class="progress-marker" style="left:${left}" id="${m.id}">
+              <span class="p-flag ${m.done ? 'done' : ''}">⚑</span>
+            </div>`;
+  }).join('');
 
   container.innerHTML = `
     <div class="progress-bar-wrapper">
@@ -93,41 +108,41 @@ function renderProgressBar() {
 }
 
 
-// ── MARK SUB-TAB COMPLETE ─────────────────────────
-// Call this when a user reaches or completes a sub-tab.
-// Automatically marks the parent module done when all
-// sub-tabs are complete and triggers the star burst.
-function markSubTabDone(tabName) {
-  const mod  = progressState.currentModule;
-  const subs = progressState.subTabs[mod];
+// ── UPDATE PROGRESS ───────────────────────────────
+// Call whenever the user navigates to a sub-tab.
+// The bar moves to exactly where the user is,
+// including backwards.
+function updateProgress(tabName) {
+  const subs = progressState.subTabs[progressState.currentModule];
+  const idx  = subs.indexOf(tabName);
+  progressState.currentSubTab = tabName;
+  progressState.currentTabIdx = idx;
+  renderProgressBar();
+}
 
-  progressState.completedSubs[mod].add(tabName);
 
-  const allDone = subs.every(s => progressState.completedSubs[mod].has(s));
-
-  if (allDone && !progressState.completedModules.has(mod)) {
+// ── COMPLETE MODULE ───────────────────────────────
+// Call when the user explicitly completes the module.
+// Moves fill to the flag and triggers the star burst.
+function completeModule() {
+  const mod = progressState.currentModule;
+  if (!progressState.completedModules.has(mod)) {
     progressState.completedModules.add(mod);
     renderProgressBar();
     setTimeout(() => triggerStarBurst(`flag-${mod}`), 400);
-  } else {
-    renderProgressBar();
   }
 }
 
 
 // ── STAR BURST ANIMATION ──────────────────────────
-// Fires a celebratory star animation from the flag
-// element when a module is fully completed.
 function triggerStarBurst(flagId) {
   const flagEl = document.getElementById(flagId);
   if (!flagEl) return;
-
   const rect  = flagEl.getBoundingClientRect();
   const burst = document.createElement('div');
   burst.className  = 'star-burst';
   burst.style.left = (rect.left + rect.width  / 2) + 'px';
   burst.style.top  = (rect.top  + rect.height / 2) + 'px';
-
   ['⭐','✨','🌟','💫','⭐','✨','🌟','💫'].forEach((s, i) => {
     const angle = (i / 8) * 2 * Math.PI;
     const dist  = 60 + Math.random() * 40;
@@ -138,7 +153,6 @@ function triggerStarBurst(flagId) {
     span.style.animationDelay = (i * 0.06) + 's';
     burst.appendChild(span);
   });
-
   document.body.appendChild(burst);
   setTimeout(() => burst.remove(), 1500);
 }
