@@ -720,7 +720,7 @@ function renderMedication() {
     </div>
     ${sections}
     <div class="next-btn-row">
-      <button class="next-btn" id="medNextBtn">Next Module: Dental Health &rarr;</button>
+      <button class="next-btn" id="medNextBtn">End of Diabetes — Go to Dental &rarr;</button>
     </div>`;
 
   // Open Monitoring by default
@@ -738,7 +738,11 @@ function renderMedication() {
   });
 
   initCardStack();
-  document.getElementById('medNextBtn').addEventListener('click', () => completeModule());
+  document.getElementById('medNextBtn').addEventListener('click', () => {
+    completeModule();
+    // Small delay so the star burst plays before navigating
+    setTimeout(() => { window.location.href = 'dental.html'; }, 1000);
+  });
 }
 
 // Manages the stacked medication quick-reference cards.

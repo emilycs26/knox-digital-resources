@@ -1,0 +1,36 @@
+/* =============================================
+   dental.css — Knox Clinic Digital Resources
+   Styles specific to the Dental Health module.
+   Shared/global styles live in base.css.
+   ============================================= */
+
+
+/* ═══════════════════════════════════════════
+   COMING SOON PLACEHOLDER
+   Used by all sub-tabs until content is ready.
+═══════════════════════════════════════════ */
+.coming-soon-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  gap: 16px;
+  color: #49454F;
+}
+
+.coming-soon-icon {
+  font-size: 48px;
+}
+
+.coming-soon-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: #00AAAC;
+}
+
+.coming-soon-sub {
+  font-size: 14px;
+  color: #79474E;
+  font-style: italic;
+}

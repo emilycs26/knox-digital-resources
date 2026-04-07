@@ -29,32 +29,33 @@ const progressState = {
 // All positions are hardcoded percentages so the fill
 // bar and the dots/flags are always in sync.
 //
-// Layout across 4 modules (each gets 25% of the bar):
+// Layout across 4 modules (each gets 25% of the bar).
+// dots: array of dot positions (%) within the full bar.
+// flag: position of the completion flag (%).
 //
-//  Module 0 (diabetes):     dot1=8%  dot2=16%  flag=25%
-//  Module 1 (dental):       dot1=33% dot2=41%  flag=50%
-//  Module 2 (hypertension): dot1=58% dot2=66%  flag=75%
-//  Module 3 (vaccines):     dot1=83% dot2=91%  flag=100%
+// Diabetes    (2 dots): dot1=8   dot2=16          flag=25
+// Dental      (3 dots): dot1=31  dot2=37  dot3=44 flag=50
+// Hypertension(2 dots): dot1=58  dot2=66          flag=75
+// Vaccines    (2 dots): dot1=83  dot2=91          flag=100
 //
-// Fill stop values (what fillPct is set to):
-//   introduction (idx 0) →  0%  (empty)
-//   diet         (idx 1) →  8%  (on dot1)
-//   medication   (idx 2) → 16%  (on dot2)
-//   completed             → 25%  (on flag)
-//
-// For future modules, extend this table by adding a new
-// row following the same pattern (+25% per module).
+// For future modules, add a new entry following the
+// same pattern (+25% per module).
 const MODULE_MARKERS = [
-  { dot1: 8,  dot2: 16, flag: 25  },  // diabetes
-  { dot1: 33, dot2: 41, flag: 50  },  // dental
-  { dot1: 58, dot2: 66, flag: 75  },  // hypertension
-  { dot1: 83, dot2: 91, flag: 100 },  // vaccines
+  { dots: [8, 16],       flag: 25  },  // diabetes
+  { dots: [31, 37, 44], flag: 50  },  // dental (3 dots for 4 tabs)
+  { dots: [58, 66],      flag: 75  },  // hypertension
+  { dots: [83, 91],      flag: 100 },  // vaccines
 ];
 
-// Fill % for each tab index within a module.
-// Index into this with currentTabIdx (0, 1, or 2).
-// Module offset (currentModIdx * 25) is added on top.
-const TAB_FILL_OFFSETS = [0, 8, 16]; // intro, diet, medication
+// Fill % for each tab index within a module, keyed by module name.
+// Each array: index 0 = entry tab (no fill), remaining = one value per dot.
+// Values are offsets within that module's 25% slice of the bar.
+const TAB_FILL_OFFSETS = {
+  diabetes: [0, 8, 16],               // 2 dots: intro(0), diet(8), medication(16)
+  dental:   [0, 6, 12, 19],           // 3 dots: intro, risk-factors, daily-care, warning-signs
+  hypertension: [0, 8, 16],           // placeholder — update when module is built
+  vaccines:     [0, 8, 16],           // placeholder — update when module is built
+};
 
 
 // ── RENDER PROGRESS BAR ───────────────────────────
@@ -71,21 +72,21 @@ function renderProgressBar() {
     const m       = MODULE_MARKERS[mi];
     const modDone = progressState.completedModules.has(mod);
     const isCur   = mod === curMod;
-
-    const dot1Done = modDone || (isCur && curTabIdx >= 1);
-    const dot2Done = modDone || (isCur && curTabIdx >= 2);
     const flagDone = modDone;
 
-    markers.push({ type: 'dot',  pct: m.dot1, done: dot1Done, id: `dot-${mod}-0` });
-    markers.push({ type: 'dot',  pct: m.dot2, done: dot2Done, id: `dot-${mod}-1` });
+    m.dots.forEach((pct, di) => {
+      const done = modDone || (isCur && curTabIdx >= di + 1);
+      markers.push({ type: 'dot', pct, done, id: `dot-${mod}-${di}` });
+    });
     markers.push({ type: 'flag', pct: m.flag, done: flagDone, id: `flag-${mod}`, label: modLabels[mi] });
   });
 
   // Fill bar: base offset of past completed modules +
   // the offset for the current tab within this module.
+  const offsets    = TAB_FILL_OFFSETS[curMod] || [0, 8, 16];
   const basePct = progressState.completedModules.has(curMod)
     ? MODULE_MARKERS[curModIdx].flag
-    : curModIdx * 25 + TAB_FILL_OFFSETS[Math.min(curTabIdx, TAB_FILL_OFFSETS.length - 1)];
+    : curModIdx * 25 + (offsets[Math.min(curTabIdx, offsets.length - 1)] || 0);
   const fillPct = Math.min(100, basePct);
 
   const markersHTML = markers.map(m => {
