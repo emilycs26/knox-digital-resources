@@ -4,19 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Digital Resources – Interactive Health Guides</title>
-  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Shared styles (navbar, footer, progress bar, quiz, shared components) -->
+  <link rel="stylesheet" href="css/base.css" />
+  <!-- Diabetes module styles -->
+  <link rel="stylesheet" href="css/diabetes.css" />
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- ═══════════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════════ -->
   <header class="navbar">
     <div class="nav-brand">
+      <!-- TODO: replace &#9632; with Knox Clinic logo SVG once available -->
       <div class="brand-icon">&#9632;</div>
       <div>
         <div class="brand-title">Digital Resources</div>
         <div class="brand-sub">Interactive Health Guides</div>
       </div>
     </div>
+
+    <!-- TODO: update hrefs when per-module routing is implemented -->
     <nav class="nav-links">
       <a href="#" class="nav-link active">Diabetes</a>
       <a href="#" class="nav-link">Hypertension</a>
@@ -25,35 +34,41 @@
     </nav>
   </header>
 
-  <!-- PROGRESS BAR (rendered by JS) -->
+  <!-- ═══════════════════════════════════════════
+       PROGRESS BAR
+       Populated by renderProgressBar() in js/progress.js
+  ═══════════════════════════════════════════ -->
   <div class="progress-bar-container"></div>
 
-  <!-- MAIN CONTENT -->
+  <!-- ═══════════════════════════════════════════
+       MAIN CONTENT — DIABETES MODULE
+  ═══════════════════════════════════════════ -->
   <main class="content-wrapper">
     <h1 class="module-title">Diabetes</h1>
     <p class="module-subtitle">Click on the tabs below to learn more about:</p>
 
-    <!-- TABS -->
+    <!-- Tab buttons -->
     <div class="tabs">
       <button class="tab-btn active" data-tab="introduction">Introduction</button>
       <button class="tab-btn" data-tab="diet">Diet</button>
       <button class="tab-btn" data-tab="medication">Medication</button>
     </div>
 
-    <!-- TAB PANELS -->
+    <!-- Tab panels — each populated by its render function in js/diabetes.js -->
     <div class="tab-content" id="tab-introduction">
-      <!-- Injected by JS -->
+      <!-- Populated by renderIntroduction() -->
     </div>
     <div class="tab-content hidden" id="tab-diet">
-      <!-- Injected by JS -->
+      <!-- Populated by renderDiet() -->
     </div>
     <div class="tab-content hidden" id="tab-medication">
-      <!-- Injected by JS -->
+      <!-- Populated by renderMedication() -->
     </div>
-
   </main>
 
-  <!-- FOOTER -->
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-contact">
@@ -76,6 +91,9 @@
     <div class="footer-copy">Copyright &copy; Knox Clinic. All rights reserved.</div>
   </footer>
 
+  <!-- progress.js must load before diabetes.js (diabetes depends on progressState) -->
+  <script src="js/progress.js"></script>
   <script src="js/diabetes.js"></script>
+
 </body>
 </html>
