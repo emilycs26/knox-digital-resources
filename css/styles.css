@@ -586,3 +586,120 @@ a { color: inherit; text-decoration: none; }
     justify-items: center;
   }
 }
+
+/* ========== SIDE ICONS ROW (Diet tab) ========== */
+
+/* Three items in a horizontal row, evenly spaced */
+.side-icons-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Each item: circle + name + hover card stacked vertically */
+.side-item-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  position: relative;  /* anchor for the hover card */
+}
+
+/* The colored circle button */
+.side-circle-btn {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  padding: 0;
+  /* Icon swap note: the SVG inside here will be replaced with a Noun Project <img>
+     or inline <svg>. Keep this button as the wrapper — just swap the inner content. */
+}
+.side-circle-btn:hover {
+  transform: scale(1.07);
+}
+
+/* Item label below the circle */
+.side-item-name {
+  font-size: 13px;
+  color: #49454F;
+  text-align: center;
+  font-weight: 400;
+}
+
+/* Hover card that appears below the circle */
+.side-hover-card {
+  border: 1.5px solid;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  width: 100%;
+  max-width: 200px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  animation: fadeIn 0.15s ease;
+}
+.side-hover-card ul {
+  padding-left: 16px;
+  margin-top: 4px;
+}
+.side-hover-card li {
+  margin-bottom: 3px;
+  font-size: 12px;
+}
+
+/* ========== PLATE LAYOUT TWEAK ========== */
+/* Override old plate-layout grid to use 3 columns:
+   left card | plate | right column (carb + protein stacked) */
+.plate-layout {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+/* ========== MED CARD STACK ========== */
+.med-card-stack {
+  position: relative;
+  width: 260px;
+  height: 220px;
+  margin: 0 auto 8px;
+}
+.med-card {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: transform 0.3s ease, z-index 0s, opacity 0.2s;
+  user-select: none;
+  line-height: 1.6;
+}
+.med-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+
+/* ========== RESPONSIVE: stack side icons on small screens ========== */
+@media (max-width: 600px) {
+  .side-icons-row {
+    flex-direction: column;
+    align-items: center;
+  }
+  .side-hover-card {
+    max-width: 280px;
+  }
+  .plate-layout {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+}
