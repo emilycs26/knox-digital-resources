@@ -9,8 +9,6 @@
 
 
 // ── ORGAN DATA ────────────────────────────────────
-// Used by renderIntroduction() to build the clickable
-// organ icon row and detail box.
 const organData = {
   eyes:    { emoji: '👁',  label: 'Eyes',         detail: 'High blood sugar can damage the small blood vessels in the retina, leading to diabetic retinopathy and vision loss.' },
   kidneys: { emoji: '🫘', label: 'Kidneys',       detail: 'Diabetes is the leading cause of chronic kidney disease. Damaged kidneys lose their ability to filter waste from the blood.' },
@@ -21,8 +19,6 @@ const organData = {
 
 
 // ── TYPE DETAIL DATA ──────────────────────────────
-// Used by buildTypePanel() to render the Type 1,
-// Type 2, and Pre-diabetes detail panels.
 const typeDetails = {
   t1: {
     accentColor: '#e040c0', bgColor: '#fce4f5', borderColor: '#f0a8dc',
@@ -101,10 +97,6 @@ const typeDetails = {
 
 
 // ── PLATE SEGMENT DATA ────────────────────────────
-// Used by buildPlateSVG() and renderDiet().
-// TO SWAP AN ICON: replace the svgIcon <g> block with:
-//   <image href="assets/icons/your-icon.svg" x="..." y="..." width="56" height="56"
-//     style="filter:brightness(0) invert(1);pointer-events:none;" />
 const plateSegData = {
   veg: {
     label: 'Nonstarchy Vegetables', pct: '50%',
@@ -145,10 +137,6 @@ const plateSegData = {
 
 
 // ── SIDE ITEM DATA ────────────────────────────────
-// Used by buildSideItems() and renderDiet().
-// TO SWAP AN ICON: replace svgIcon with:
-//   <img src="assets/icons/your-icon.svg" width="44" height="44"
-//     style="filter:brightness(0) invert(1)">
 const sideItemData = [
   {
     id: 'beverages', name: 'Beverages', title: 'Beverages',
@@ -187,8 +175,6 @@ const sideItemData = [
 
 
 // ── MEDICATION SECTION DATA ───────────────────────
-// Used by renderMedication() to build the Four M's
-// pie chart sections and expandable content panels.
 const msData = {
   monitoring: {
     title: '1. Monitoring',
@@ -225,7 +211,7 @@ const msData = {
           <div class="fs-cgm-card"><h4>Best for</h4><ul><li>Occasional checks</li><li>Simple, low-tech monitoring</li><li>People not needing constant tracking</li></ul></div>
         </div>
         <div style="background:#fdf8e8;border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:12px;">
-          <div style="background:#f0f0e8;color:#555;border-radius:8px;padding:10px;text-align:center;font-weight:700;font-size:14px;border:1.5px solid #ddd;">CGM</div>
+          <div style="background:#99CA3D;color:#fff;border-radius:8px;padding:10px;text-align:center;font-weight:700;font-size:14px;border:1.5px solid #ddd;">CGM</div>
           <div style="display:flex;justify-content:center;align-items:center;min-height:120px;font-size:64px;">📡</div>
           <div class="fs-cgm-card"><h4>How it works</h4><ul><li>Small sensor placed under the skin</li><li>Tracks glucose levels automatically throughout the day</li><li>Sends data to your phone or device</li></ul></div>
           <div class="fs-cgm-card"><h4>What it measures</h4><ul><li>Real-time glucose levels</li><li>Trends and patterns over time</li></ul></div>
@@ -259,20 +245,8 @@ const msData = {
           ${m.extra || ''}
         </div>`).join('')}
       <p style="font-weight:700;font-size:15px;margin:24px 0 8px;">Quick Reference Cards</p>
-      <p style="font-size:13px;color:#555;margin-bottom:16px;">Click a card to bring it to the front.</p>
-      <div class="med-card-stack" id="medCardStack">
-        ${[
-          { label: 'Card 1: Metformin',             bg: '#c8e6c9', lines: ['<b>How it works</b>', 'Lowers the amount of sugar your liver releases', '<b>How it\'s taken</b>', 'Oral pill, usually once or twice daily', '<b>Key thing to know</b>', 'Often the first medication prescribed for Type 2 diabetes'] },
-          { label: 'Card 2: Insulin',               bg: '#fff9c4', lines: ['<b>How it works</b>', 'Helps your body move sugar from your blood into your cells', '<b>How it\'s taken</b>', 'Injection or insulin pump', '<b>Key thing to know</b>', 'Can cause low blood sugar if not balanced with food'] },
-          { label: 'Card 3: GLP-1 Receptor Agonists', bg: '#f8bbd0', lines: ['<b>How it works</b>', 'Slows digestion and helps your body release insulin', '<b>How it\'s taken</b>', 'Weekly or daily injection (some oral options exist)', '<b>Key thing to know</b>', 'Can help with weight loss'] },
-          { label: 'Card 4: SGLT2 Inhibitors',      bg: '#e1bee7', lines: ['<b>How it works</b>', 'Removes excess sugar through urine', '<b>How it\'s taken</b>', 'Oral pill, once daily', '<b>Key thing to know</b>', 'Also protects the heart and kidneys'] },
-        ].map((c, i) => `
-          <div class="med-card" data-index="${i}" style="background:${c.bg};z-index:${4 - i};transform:rotate(${(i - 1.5) * 4}deg) translate(${(i - 1.5) * 6}px,${i * 2}px);">
-            <p style="font-size:11px;color:#777;margin-bottom:6px;">${c.label}</p>
-            ${c.lines.map(l => `<p style="font-size:13px;line-height:1.6;">${l}</p>`).join('')}
-          </div>`).join('')}
-      </div>
-      <div style="display:flex;justify-content:center;gap:8px;margin-top:12px;" id="cardDots"></div>`,
+      <p style="font-size:13px;color:#555;margin-bottom:16px;">Click a card or use the arrows to bring it forward.</p>
+      ${buildMedCardStack()}`,
   },
   movement: {
     title: '3. Movement',
@@ -300,17 +274,52 @@ const msData = {
 };
 
 
+// ── MED CARD DATA ─────────────────────────────────
+const medCardData = [
+  {
+    label: 'Card 1', name: 'Metformin', emoji: '💊', bg: '#c8e6c9',
+    rows: [
+      '<b>How it works</b>', 'Lowers the amount of sugar your liver releases',
+      '<b>How it\'s taken</b>', 'Oral pill, usually once or twice daily',
+      '<b>Key thing to know</b>', 'Often the first medication prescribed for Type 2 diabetes',
+    ],
+  },
+  {
+    label: 'Card 2', name: 'Insulin', emoji: '💉', bg: '#fff9c4',
+    rows: [
+      '<b>How it works</b>', 'Helps your body move sugar from your blood into your cells',
+      '<b>How it\'s taken</b>', 'Injection or insulin pump',
+      '<b>Key thing to know</b>', 'Can cause low blood sugar if not balanced with food',
+    ],
+  },
+  {
+    label: 'Card 3', name: 'GLP-1 Receptor Agonists', emoji: '💉', bg: '#f8bbd0',
+    rows: [
+      '<b>How it works</b>', 'Slows digestion and helps your body release insulin',
+      '<b>How it\'s taken</b>', 'Weekly or daily injection (some oral options exist)',
+      '<b>Key thing to know</b>', 'Can help with weight loss',
+    ],
+  },
+  {
+    label: 'Card 4', name: 'SGLT2 Inhibitors', emoji: '💊', bg: '#e1bee7',
+    rows: [
+      '<b>How it works</b>', 'Removes excess sugar through urine',
+      '<b>How it\'s taken</b>', 'Oral pill, once daily',
+      '<b>Key thing to know</b>', 'Also protects the heart and kidneys',
+    ],
+  },
+];
+
+
 // ═══════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════
 
-// Returns an {x, y} point on a circle at a given degree
 function polar(cx, cy, r, deg) {
   const rad = (deg - 90) * Math.PI / 180;
   return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
 }
 
-// Returns an SVG arc path string (does not close the path)
 function arc(cx, cy, r, a1, a2) {
   const s = polar(cx, cy, r, a1), e = polar(cx, cy, r, a2);
   const large = ((a2 - a1 + 360) % 360) > 180 ? 1 : 0;
@@ -322,8 +331,6 @@ function arc(cx, cy, r, a1, a2) {
 // INTRODUCTION TAB
 // ═══════════════════════════════════════════════════
 
-// Builds the HTML for a Type 1, Type 2, or
-// Pre-diabetes detail panel from typeDetails data.
 function buildTypePanel(key) {
   const d  = typeDetails[key];
   const ac = d.accentColor, bg = d.bgColor, bc = d.borderColor;
@@ -414,25 +421,20 @@ function buildTypePanel(key) {
   </div>`;
 }
 
-// Evaluates checked risk factors and injects a
-// personalised message. Called via inline onclick.
 window.evaluateRisk = function(borderColor) {
   const checked = document.querySelectorAll('.risk-checkbox:checked').length;
   const msg = document.getElementById('riskMessage');
   if (!msg) return;
-
   let text = '';
   if      (checked === 0) text = `✅ <strong>Great news!</strong> You didn't select any risk factors. Keep up your healthy habits and talk to your doctor about routine screening starting at age 35.`;
   else if (checked <= 2)  text = `🟡 <strong>Having ${checked} risk factor${checked > 1 ? 's' : ''}</strong> doesn't mean you'll develop Type 2 diabetes — but it's a good reason to mention it to your doctor. Small lifestyle changes now can make a big difference.`;
   else if (checked <= 4)  text = `🟠 <strong>You selected ${checked} risk factors.</strong> This is worth a conversation with your healthcare provider. They can recommend screening and personalized steps to reduce your risk.`;
   else                    text = `🔴 <strong>You selected ${checked} risk factors.</strong> Please consider talking to your doctor soon about diabetes screening. Early detection makes a real difference — and many risk factors can be addressed with support.`;
-
   msg.innerHTML = text;
   msg.style.display = 'block';
   msg.style.borderColor = borderColor;
 };
 
-// Builds and wires up the Introduction tab content.
 function renderIntroduction() {
   const organHTML = Object.entries(organData).map(([k, v]) => `
     <div class="organ-item" data-organ="${k}">
@@ -463,7 +465,6 @@ function renderIntroduction() {
       <button class="next-btn" id="introNextBtn">Go to Diet &rarr;</button>
     </div>`;
 
-  // Organ click → show/hide detail box
   document.querySelectorAll('.organ-item').forEach(el => {
     el.addEventListener('click', () => {
       const k = el.dataset.organ, box = document.getElementById('organDetailBox');
@@ -474,13 +475,11 @@ function renderIntroduction() {
     });
   });
 
-  // Type box click → open/close detail panel
   let activeType = null;
   function openTypePanel(key) {
     const container = document.getElementById('typePanelContainer');
     const grid      = document.getElementById('typeBoxesGrid');
     const center    = document.getElementById('typeBoxesCenter');
-
     if (activeType === key) {
       container.innerHTML = ''; grid.style.display = ''; center.style.display = ''; activeType = null; return;
     }
@@ -488,7 +487,6 @@ function renderIntroduction() {
     grid.style.display = 'none'; center.style.display = 'none';
     container.innerHTML = buildTypePanel(key);
     container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
     container.querySelector('[data-close]').addEventListener('click', () => {
       container.innerHTML = ''; grid.style.display = ''; center.style.display = ''; activeType = null;
     });
@@ -510,7 +508,6 @@ function renderIntroduction() {
 // DIET TAB
 // ═══════════════════════════════════════════════════
 
-// Builds the plate SVG from plateSegData.
 function buildPlateSVG() {
   const cx = 150, cy = 150, r = 128;
   const segs = [
@@ -534,7 +531,6 @@ function buildPlateSVG() {
   </svg>`;
 }
 
-// Builds the three side-item icon circles from sideItemData.
 function buildSideItems() {
   return sideItemData.map(s => {
     const bulletsHTML = s.bullets ? `<ul style="padding-left:16px;margin-top:4px;">${s.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : '';
@@ -552,7 +548,6 @@ function buildSideItems() {
   }).join('');
 }
 
-// Builds and wires up the Diet tab content.
 function renderDiet() {
   document.getElementById('tab-diet').innerHTML = `
     <h2 class="section-h3" style="font-size:22px;color:#00AAAC;font-weight:400;margin-bottom:6px;">Build Your Plate</h2>
@@ -620,9 +615,8 @@ function renderDiet() {
       <button class="next-btn" id="dietNextBtn">Go to Medication &nbsp;›</button>
     </div>`;
 
-  // Plate hover → show matching info card
-  const segCardMap  = { veg: 'plateCardLeft', carb: 'plateCardCarb', protein: 'plateCardProtein' };
-  const allCardIds  = Object.values(segCardMap);
+  const segCardMap = { veg: 'plateCardLeft', carb: 'plateCardCarb', protein: 'plateCardProtein' };
+  const allCardIds = Object.values(segCardMap);
   document.querySelectorAll('.plate-seg').forEach(el => {
     el.addEventListener('mouseenter', () => {
       allCardIds.forEach(id => { document.getElementById(id).style.display = 'none'; });
@@ -634,19 +628,16 @@ function renderDiet() {
     });
   });
 
-  // Side icon hover → show matching hover card
   document.querySelectorAll('.side-item-wrap').forEach(wrap => {
     const circle = wrap.querySelector('.side-circle-btn'), card = wrap.querySelector('.side-hover-card');
     wrap.addEventListener('mouseenter', () => { circle.style.background = circle.dataset.hoverColor; card.style.display = 'block'; });
     wrap.addEventListener('mouseleave', () => { circle.style.background = circle.dataset.normalColor; card.style.display = 'none'; });
   });
 
-  // Quiz submit
   document.getElementById('quizSubmit').addEventListener('click', () => {
     const sel = document.querySelector('input[name="q1"]:checked');
     const ans = document.getElementById('quizAnswer'), btn = document.getElementById('quizSubmit');
     if (!sel) { alert('Please select an answer first!'); return; }
-
     if (sel.value === 'C') {
       ans.className = 'quiz-answer show correct';
       ans.innerHTML = `<strong>Correct Answer: C</strong><br>Water is the top recommended beverage. Sugary drinks like regular soda and juice can cause rapid spikes in blood sugar. The ADA recommends prioritizing water over sweetened beverages.`;
@@ -670,7 +661,24 @@ function renderDiet() {
 // MEDICATION TAB
 // ═══════════════════════════════════════════════════
 
-// Builds the Four M's pie SVG from msData keys.
+function buildMedCardStack() {
+  const cardsHTML = medCardData.map((c, i) => `
+    <div class="med-card" data-index="${i}" style="background:${c.bg};">
+      <div class="med-card-label">${c.label}</div>
+      <div class="med-card-emoji">${c.emoji}</div>
+      <div class="med-card-name">${c.name}</div>
+      ${c.rows.map(r => `<div class="med-card-row">${r}</div>`).join('')}
+    </div>`).join('');
+
+  return `
+    <div class="med-card-stack" id="medCardStack">${cardsHTML}</div>
+    <div class="med-card-controls">
+      <button class="med-arrow" id="medArrowLeft">&#8592;</button>
+      <div class="med-dots" id="cardDots"></div>
+      <button class="med-arrow" id="medArrowRight">&#8594;</button>
+    </div>`;
+}
+
 function buildMsPieSVG() {
   const cx = 150, cy = 150, r = 130;
   const slices = [
@@ -703,7 +711,6 @@ function buildMsPieSVG() {
   </svg>`;
 }
 
-// Builds and wires up the Medication tab content.
 function renderMedication() {
   const sections = Object.entries(msData).map(([k, v]) =>
     `<div class="ms-section" id="ms-${k}" style="background:${v.bg};">
@@ -723,10 +730,8 @@ function renderMedication() {
       <button class="next-btn" id="medNextBtn">End of Diabetes — Go to Dental &rarr;</button>
     </div>`;
 
-  // Open Monitoring by default
   document.getElementById('ms-monitoring').classList.add('open');
 
-  // Pie slice click → open matching section
   document.querySelectorAll('.ms-slice').forEach(el => {
     el.addEventListener('click', () => {
       const k = el.dataset.ms;
@@ -740,36 +745,56 @@ function renderMedication() {
   initCardStack();
   document.getElementById('medNextBtn').addEventListener('click', () => {
     completeModule();
-    // Small delay so the star burst plays before navigating
     setTimeout(() => { window.location.href = 'dental.html'; }, 1000);
   });
 }
 
-// Manages the stacked medication quick-reference cards.
 function initCardStack() {
-  const stack = document.getElementById('medCardStack');
-  if (!stack) return;
+  const stack  = document.getElementById('medCardStack');
   const dotsEl = document.getElementById('cardDots');
-  const cards  = Array.from(stack.querySelectorAll('.med-card'));
-  let topIndex = 0;
+  if (!stack || !dotsEl) return;
 
-  function updateStack() {
-    cards.forEach((c, i) => {
-      const rel = (i - topIndex + cards.length) % cards.length;
-      c.style.zIndex        = cards.length - rel;
-      c.style.transform     = `rotate(${(rel - 1.5) * 4}deg) translate(${(rel - 1.5) * 6}px,${rel * 2}px)`;
-      c.style.opacity       = rel < 3 ? 1 : 0;
-      c.style.pointerEvents = rel === 0 ? 'auto' : 'none';
+  const cards = Array.from(stack.querySelectorAll('.med-card'));
+  const n     = cards.length;
+  let topIdx  = 0;
+
+  // rel=0 → centered upright (active card)
+  // rel=1,2,3 → fanned behind
+  const fanPos = [
+    { tx:   0, ty:  0,  rot:  0  },
+    { tx: -95, ty: 30,  rot: -20 },
+    { tx:  95, ty: 30,  rot:  20 },
+    { tx:   0, ty: 40,  rot:  8  },
+  ];
+
+  function render() {
+    cards.forEach((el, i) => {
+      const rel = (i - topIdx + n) % n;
+      const pos = fanPos[rel] || fanPos[fanPos.length - 1];
+      el.style.transform = `translate(calc(-50% + ${pos.tx}px), calc(-50% + ${pos.ty}px)) rotate(${pos.rot}deg)`;
+      el.style.zIndex    = rel === 0 ? n + 1 : Math.max(1, n - rel);
+      el.classList.toggle('is-top', rel === 0);
     });
-    dotsEl.innerHTML = cards.map((_, i) =>
-      `<span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:${i === topIndex ? '#00AAAC' : '#c8d8c8'};cursor:pointer;" data-dot="${i}"></span>`
-    ).join('');
-    dotsEl.querySelectorAll('span').forEach(dot => {
-      dot.addEventListener('click', () => { topIndex = +dot.dataset.dot; updateStack(); });
-    });
+    dotsEl.querySelectorAll('.med-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === topIdx)
+    );
   }
-  cards.forEach((card, i) => card.addEventListener('click', () => { topIndex = i; updateStack(); }));
-  updateStack();
+
+  dotsEl.innerHTML = cards.map((_, i) =>
+    `<span class="med-dot${i === topIdx ? ' active' : ''}" data-dot="${i}"></span>`
+  ).join('');
+  dotsEl.querySelectorAll('.med-dot').forEach(dot =>
+    dot.addEventListener('click', () => { topIdx = +dot.dataset.dot; render(); })
+  );
+
+  cards.forEach((el, i) =>
+    el.addEventListener('click', () => { if (topIdx !== i) { topIdx = i; render(); } })
+  );
+
+  document.getElementById('medArrowLeft').addEventListener('click',  () => { topIdx = (topIdx - 1 + n) % n; render(); });
+  document.getElementById('medArrowRight').addEventListener('click', () => { topIdx = (topIdx + 1)     % n; render(); });
+
+  render();
 }
 
 
@@ -782,7 +807,7 @@ const tabRenderers = {
   diet:         renderDiet,
   medication:   renderMedication,
 };
-const rendered = {}; // tracks which tabs have been rendered already
+const rendered = {};
 
 function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));

@@ -263,20 +263,92 @@
 ═══════════════════════════════════════════ */
 .med-card-stack {
   position: relative;
-  width: 260px; height: 220px;
-  margin: 0 auto 8px;
+  width: 260px;
+  height: 320px;
+  margin: 0 auto 0;
 }
+
 .med-card {
   position: absolute;
-  top: 0; left: 0; width: 100%;
+  width: 220px; height: 240px;
+  left: 50%; top: 50%;
   border-radius: 16px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  padding: 18px 18px 14px;
+  box-sizing: border-box;
   cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.2s;
-  user-select: none; line-height: 1.6;
+  display: flex; flex-direction: column; gap: 5px;
+  border: 1px solid rgba(0,0,0,0.08);
+  overflow: hidden;
+  transform-origin: center center;
+  transition: transform 0.42s cubic-bezier(.4,0,.2,1), box-shadow 0.25s;
 }
-.med-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+
+.med-card.is-top {
+  box-shadow: 0 10px 32px rgba(0,0,0,0.18);
+  cursor: default;
+}
+
+.med-card-label {
+  font-size: 10px; font-weight: 500;
+  color: rgba(0,0,0,0.4);
+  margin-bottom: 1px;
+}
+
+.med-card-emoji { font-size: 18px; }
+
+.med-card-name {
+  font-size: 14px; font-weight: 700;
+  color: rgba(0,0,0,0.82);
+  margin-bottom: 2px;
+}
+
+.med-card-row {
+  font-size: 11.5px; line-height: 1.5;
+  color: rgba(0,0,0,0.72);
+}
+
+.med-card-row b {
+  font-weight: 600;
+  color: rgba(0,0,0,0.88);
+}
+
+/* Controls row: arrows + dots */
+.med-card-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.med-arrow {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #c8d8c8;
+  background: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  color: #49454F;
+  transition: background 0.15s;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1;
+}
+
+.med-arrow:hover { background: #e8f0e8; }
+
+.med-dots { display: flex; gap: 8px; }
+
+.med-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #c8d8c8;
+  cursor: pointer;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.med-dot.active { background: #00AAAC; }
 
 
 /* ═══════════════════════════════════════════
