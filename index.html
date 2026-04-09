@@ -16,23 +16,34 @@
        NAVBAR
   ═══════════════════════════════════════════ -->
   <header class="navbar">
-    <div class="nav-brand">
-      <!-- TODO: replace &#9632; with Knox Clinic logo SVG once available -->
-      <div class="brand-icon">&#9632;</div>
-      <div>
-        <div class="brand-title">Digital Resources</div>
-        <div class="brand-sub">Interactive Health Guides</div>
-      </div>
+  <div class="nav-brand">
+    <div class="brand-icon">&#9632;</div>
+    <div>
+      <div class="brand-title">Digital Resources</div>
+      <div class="brand-sub">Interactive Health Guides</div>
     </div>
+  </div>
 
-    <!-- TODO: update hrefs when per-module routing is implemented -->
-    <nav class="nav-links">
-      <a href="#" class="nav-link active">Diabetes</a>
-      <a href="#" class="nav-link">Hypertension</a>
-      <a href="#" class="nav-link">Vaccines</a>
-      <a href="#" class="nav-link">Dental Health</a>
-    </nav>
-  </header>
+  <nav class="nav-links">
+    <a href="index.html" class="nav-link active">Diabetes</a>
+    <a href="#" class="nav-link">Hypertension</a>
+    <a href="#" class="nav-link">Vaccines</a>
+    <a href="dental.html" class="nav-link">Dental Health</a>
+  </nav>
+
+  <!-- Language switcher -->
+  <div class="lang-switcher">
+    <button class="lang-btn" id="langBtn">
+      <span class="lang-globe">🌐</span>
+      <span class="lang-label" id="langLabel">English</span>
+      <span class="lang-caret">▾</span>
+    </button>
+    <div class="lang-dropdown" id="langDropdown">
+      <div class="lang-option lang-option-active">🇺🇸 English</div>
+      <div class="lang-option">🇪🇸 Español</div>
+    </div>
+  </div>
+</header>
 
   <!-- ═══════════════════════════════════════════
        PROGRESS BAR
@@ -94,6 +105,15 @@
   <!-- progress.js must load before diabetes.js (diabetes depends on progressState) -->
   <script src="js/progress.js"></script>
   <script src="js/diabetes.js"></script>
+
+  <script>
+  const langBtn = document.getElementById('langBtn');
+  const langDropdown = document.getElementById('langDropdown');
+  langBtn.addEventListener('click', () => langDropdown.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!langBtn.contains(e.target)) langDropdown.classList.remove('open');
+  });
+  </script>
 
 </body>
 </html>

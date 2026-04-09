@@ -114,24 +114,14 @@ const plateSegData = {
     bg: '#fff3e0', border: '#ffcc80', textColor: '#e65100',
     detail:  'Starchy vegetables, beans, lentils, whole wheat bread, oats, peas, corn, potatoes, winter squash, chickpeas.',
     serving: '¼ of your plate (~1 cup or 1 slice bread)',
-    svgIcon: `<g class="plate-icon" style="pointer-events:none" transform="translate(63,63)">
-      <rect x="4" y="16" width="44" height="28" rx="4" fill="none" stroke="#fff" stroke-width="2.2"/>
-      <path d="M4 20 Q26 6 48 20" fill="none" stroke="#fff" stroke-width="2.2"/>
-      <line x1="14" y1="20" x2="14" y2="44" stroke="#fff" stroke-width="1.4" stroke-dasharray="2,3"/>
-      <line x1="26" y1="20" x2="26" y2="44" stroke="#fff" stroke-width="1.4" stroke-dasharray="2,3"/>
-      <line x1="38" y1="20" x2="38" y2="44" stroke="#fff" stroke-width="1.4" stroke-dasharray="2,3"/>
-    </g>`,
+    svgIcon: `<text x="93" y="93" text-anchor="middle" dominant-baseline="middle" font-size="36" style="pointer-events:none;">🌾</text>`,
   },
   protein: {
     label: 'Protein', pct: '25%',
     bg: '#fce4e4', border: '#ef9a9a', textColor: '#b71c1c',
     detail:  'Aim for lean options like chicken or turkey (no skin), fish, tofu, or eggs.',
     serving: '3 oz cooked',
-    svgIcon: `<g class="plate-icon" style="pointer-events:none" transform="translate(183,63)">
-      <path d="M8 26 Q20 10 44 26 Q20 42 8 26Z" fill="none" stroke="#fff" stroke-width="2.2"/>
-      <path d="M8 26 L0 16 L4 26 L0 36Z"        fill="none" stroke="#fff" stroke-width="2.2"/>
-      <circle cx="38" cy="22" r="2.5" fill="#fff"/>
-    </g>`,
+    svgIcon: `<text x="207" y="93" text-anchor="middle" dominant-baseline="middle" font-size="36" style="pointer-events:none;">🍗</text>`,
   },
 };
 
@@ -744,7 +734,24 @@ function renderMedication() {
 
   initCardStack();
   document.getElementById('medNextBtn').addEventListener('click', () => {
-    completeModule();
+    const btn = document.getElementById('medNextBtn');
+    const rect = btn.getBoundingClientRect();
+    const burst = document.createElement('div');
+    burst.className = 'star-burst';
+    burst.style.left = (rect.left + rect.width / 2) + 'px';
+    burst.style.top  = (rect.top  + rect.height / 2) + 'px';
+    ['⭐','✨','🌟','💫','⭐','✨','🌟','💫'].forEach((s, i) => {
+      const angle = (i / 8) * 2 * Math.PI;
+      const dist  = 60 + Math.random() * 40;
+      const span  = document.createElement('span');
+      span.textContent = s;
+      span.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+      span.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+      span.style.animationDelay = (i * 0.06) + 's';
+      burst.appendChild(span);
+    });
+    document.body.appendChild(burst);
+    setTimeout(() => burst.remove(), 1500);
     setTimeout(() => { window.location.href = 'dental.html'; }, 1000);
   });
 }

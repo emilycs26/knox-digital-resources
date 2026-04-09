@@ -99,5 +99,14 @@
   <script src="js/progress.js"></script>
   <script src="js/dental.js"></script>
 
+  <script>
+  const langBtn = document.getElementById('langBtn');
+  const langDropdown = document.getElementById('langDropdown');
+  langBtn.addEventListener('click', () => langDropdown.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!langBtn.contains(e.target)) langDropdown.classList.remove('open');
+  });
+  </script>
+
 </body>
 </html>
